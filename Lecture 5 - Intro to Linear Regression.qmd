@@ -1,0 +1,75 @@
+---
+title: "Lecture 5 - Intro to Linear Regression"
+author: "Waha"
+format: html
+editor: visual
+---
+
+# Linear Regression
+
+```{r}
+library(tidyverse)
+library(MASS)
+library(ISLR)
+library(ISLR2)
+```
+
+```{r}
+head(Advertising)
+mod = summary(lm(Sales ~ TV, data = Advertising))
+mod
+mod$sigma
+mod$sigma/mean(Advertising$Sales)
+mod$r.squared
+```
+
+## Multiple Linear Regression
+
+```{r}
+mod = lm(Sales ~ TV + Radio + Newspaper,
+   data = Advertising)
+
+broom::tidy(mod)
+broom::glance(mod)
+broom::augment(mod)
+```
+
+```{r}
+lm(Sales~Newspaper, data = Advertising)|>
+  summary()|>
+  broom::tidy()
+```
+
+## Exercise
+
+```{r}
+head(Credit)
+
+mod = lm(Balance~Income+Age, data = Credit)
+summary(mod)
+
+mod2 = lm(Balance~Income+Age+Student+Married+Region, data = Credit)
+
+broom::tidy(mod2)
+broom::glance(mod2)
+broom::augment(mod2)
+
+```
+
+## Exercise
+
+```{r}
+
+#create dummy variables
+dummy_student = ifelse(Credit$Student== 'Yes', 1, 0)
+
+#create data frame to use for regression
+modded_mod <- data.frame(Income = Credit$Income, Dummy = dummy_student, Balance = Credit$Balance)
+head(modded_mod)
+
+new_nmod <- lm(Balance~Income+Dummy+Income*Dummy,data=modded_mod)
+summary(new_nmod)
+
+broom::tidy(new_nmod)
+broom::glance(new_nmod)
+```

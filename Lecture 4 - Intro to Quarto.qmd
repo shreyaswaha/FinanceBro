@@ -1,0 +1,68 @@
+---
+title: "Lecture 4 - Intro to Quarto"
+author: "Waha"
+format: html
+editor: visual
+---
+
+# Quarto
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggplot2)
+
+data_diwali <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-11-14/diwali_sales_data.csv")
+
+summary(data_diwali)
+data_diwali %>%
+  group_by(Marital_Status) %>%
+  ggplot(aes(x = Marital_Status, y = Amount)) + geom_col()
+
+```
+
+Hence, unmarried people spend more than married ones.
+
+```{r}
+#| echo: false
+ggplot(data = data_diwali)+
+  geom_point(aes(x = Age,y = Amount))
+```
+
+```{r}
+ggplot(data = data_diwali) + 
+  stat_count(mapping = aes(x = Age))
+```
+
+Hence, more number of people that are aged 50 or below, spend during Diwali.
+
+```{r}
+#| echo: false
+
+ggplot(data = data_diwali) + 
+  stat_count(mapping = aes(x = Zone))+
+  scale_fill_brewer(palette = "Pastel1")+
+  theme_bw()
+```
+
+Hence, Central region has the most consumers on Diwali.
+
+```{r}
+#| echo: false
+ggplot(data = data_diwali) + 
+  stat_count(mapping = aes(x = Occupation))
+```
+
+```{r}
+#| echo: false
+data_diwali %>%
+  ggplot(aes(x = Occupation, y = Amount)) + geom_col()
+```
+
+Hence, IT Sector has the largest number of consumers that also contribute the most to the amount spent.
+
+```{r}
+data_diwali %>%
+  ggplot(aes(x = Product_Category, y = Amount)) + geom_col()
+```

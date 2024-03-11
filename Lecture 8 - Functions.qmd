@@ -1,0 +1,119 @@
+---
+title: "Lecture 8 - Functions"
+author: "Waha"
+format: html
+editor: visual
+---
+
+# Functions
+
+```{r}
+#| echo: false
+
+library(dplyr)
+library(tidyverse)
+```
+
+```{r}
+data <- data.frame(id = rep(letters[8 :10], each = 2), 
+                   a = seq(5 ,10), b = seq(1,6), 
+                   c = seq(32,37), d = seq(19,24))
+
+new_data <- data %>%
+  mutate(new_a = 0.837636 * a, 
+         new_b = 0.837636 * b,
+         new_c = 0.837236 * c,
+         new_d = 0.837636 * d)
+
+
+myfirstfunction <- function(x){0.837636 * x}
+
+data %>%
+  mutate(new_a = myfirstfunction(a), 
+         new_b = myfirstfunction(b),
+         new_c = myfirstfunction(c),
+         new_d = myfirstfunction(d))
+
+data %>%
+  mutate(across(a :d, myfirstfunction))
+
+logic_multiply <- function(x){ifelse( x %% 2 == 0, x*2,x)}
+
+data %>%
+  mutate(across(a : d , logic_multiply))
+
+
+```
+
+## DIY-1
+
+```{r}
+weird_multiply <- function(x){1.77364 * x}
+data %>%
+  mutate(across(a :d, weird_multiply))
+
+weird_exponent <- function(x){x ^ 0.5}
+data %>%
+  mutate(across(a :d, weird_exponent))
+
+multiply_2 <- function(x){ifelse( x > 10, x*2, x)}
+data %>%
+  mutate(across(a : d, multiply_2))
+
+multiply_2or3 <- function(x){ifelse( x > 20, x*2, x*3)}
+data %>%
+  mutate(across(a : d, multiply_2or3))
+```
+
+## DIY-2
+
+```{r}
+my_eda_function <- function(dataframe, variable) {
+  dataframe %>%
+    summarize(
+      count = n(),
+      minimum_value = min({{ variable}}, na.rm = TRUE),
+      maximum_value = max({{ variable}}, na.rm = TRUE),
+      range = max({{ variable}}, na.rm = TRUE) - min({{ variable}}, na.rm = TRUE)
+    )
+}
+
+data_CW = ChickWeight
+var = ChickWeight$weight
+my_eda_function(data_CW, var)
+
+grouped_mean <- function(dataframe, group_var, mean_var) {
+  dataframe %>%
+    group_by({{group_var}}) %>%
+    summarize(mean({{mean_var}}))
+  }
+grouped_mean(ChickWeight, ChickWeight$Diet, ChickWeight$weight)
+```
+
+## DIY-3
+
+```{r}
+
+diamonds_sorted_bars <- function(dataframe, variable) {
+  dataframe %>% 
+    ggplot(aes(y = {{ variable }})) +
+    geom_bar() +
+    theme_minimal()
+}
+
+diamonds %>%
+  diamonds_sorted_bars(cut)
+diamonds %>%
+  diamonds_sorted_bars(color)
+
+
+diamond_histogram_function <- function(data, variable, binwidth){
+  data %>%
+    ggplot(aes(x = {{variable}})) +
+    geom_histogram(binwidth = binwidth)
+}
+
+diamond_histogram_function(diamonds, x, 0.1)
+diamond_histogram_function(diamonds, y, 0.1)
+
+```

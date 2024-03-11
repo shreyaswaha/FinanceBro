@@ -1,0 +1,152 @@
+---
+title: "Lecture 2 - Data Wrangling Basics"
+author: "Waha"
+format: html
+editor: visual
+---
+
+# Data Wrangling Basics
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(openintro)
+```
+
+
+## Select
+```{r}
+census_data <- openintro::census
+head(census_data)
+tail(census_data)
+
+select(census_data, 
+       census_year, state_fips_code,
+       total_family_income, age, sex,
+       total_personal_income)
+
+select(census_data, 
+       -race_general, -marital_status)
+
+select(census_data, 
+       where(is.factor))
+
+census_data_selected <- select(census_data,
+                  -race_general,-marital_status)
+
+#Mutate
+census_data <- mutate(census_data, 
+                      total_income = total_family_income + total_personal_income)
+```
+
+```{r}
+
+```
+
+```{r}
+#Filter
+filter(census_data, age >= 40)
+filter(census_data, sex == "Female")
+filter(census_data, age >= 40 & sex == "Female")
+filter(census_data, age >= 40 | sex == "Female")
+filter(census_data, sex != "Female")
+
+#DIY-1
+smoking_data = openintro::smoking
+colnames(smoking_data)
+head(smoking_data)
+select(smoking_data, gender, age, smoke)
+rev(select(smoking_data, where(is.numeric)))
+select(smoking_data, -ethnicity, -nationality)
+
+#DIY-2
+rename(smoking_data, education = highest_qualification)
+smoking_data = mutate(smoking_data, total_cigarettes = amt_weekends + amt_weekdays)
+select(smoking_data, total_cigarettes)
+
+
+```
+
+## DIY-3
+
+```{r}
+filter(smoking_data, gender == "Male")
+filter(smoking_data, smoke == "No" & age == 35)
+filter(smoking_data, marital_status != "Divorced" & nationality != "English" )
+filter(smoking_data, age <= 20 & smoke == "Yes")
+count(filter(smoking_data, highest_qualification == "No Qualification"))
+filter(smoking_data, region == "London" | region == "Wales")
+```
+## Many Functions
+
+```{r}
+census_data |>
+  select(state_fips_code, age) |>
+  rename(state = state_fips_code) |>
+  arrange(census_data_renamed, state) |>
+  filter(census_data_arranged, age >= 40)
+
+census_data |>
+  group_by(state_fips_code) |>
+  summarise(total_income_state = sum(total_personal_income, na.rm = T)
+            )
+```
+
+## DIY-4
+
+```{r}
+smoking_data |>
+  select(highest_qualification, amt_weekdays) |>
+  rename(sutta_work = amt_weekdays) |>
+  arrange(smoking_data, highest_qualification)
+
+smoking_data |>
+  group_by(highest_qualification) |>
+  rename(sutta_work = amt_weekdays) |>
+  summarise(sutta_by_qualification = sum(amt_weekends, sutta_work, na.rm =T))
+
+##Q2 remains##
+
+smoking_data |>
+  group_by(gross_income) |>
+  summarise(home_sutta_by_income = sum(amt_weekends, na.rm =T))
+
+smoking_data |>
+  group_by(gender) |>
+  summarise(mean_age = mean(age, na.rm =T))
+```
+
+## case_when
+```{r}
+census_data |>
+  mutate(
+    income_category = case_when(
+      total_family_income >= 0 &
+        total_family_income < 40000 ~ "Low Income",
+      total_family_income >= 40000 &
+        total_family_income < 100000 ~ "Middle Income",
+      total_family_income >= 100000 ~ "High Income")
+    )
+```
+
+
+## DIY-5
+
+```{r}
+smoking_data |>
+  mutate(age_category = case_when(age >= 15 & age <= 25 ~ "1",
+                                  age >= 26 & age <= 40 ~ "2",
+                                  age >= 41 & age <=59 ~ "3",
+                                  age > 59 ~ "4")) |>
+  select(age, age_category)
+
+smoking_data |>
+  mutate(gender_category = case_when(gender == "Male" ~ 0, gender == "Female" ~ 1))|>
+  select(gender, gender_category)
+
+smoking_data |>
+  mutate(smoke_category = case_when(amt_weekends >= 0 & amt_weekends <= 10 ~ "Low",
+                                    amt_weekends >= 11 & amt_weekends <= 30 ~ "Medium",
+                                    amt_weekends > 30 ~ "High")) |>
+  select(amt_weekends, smoke_category)
+```

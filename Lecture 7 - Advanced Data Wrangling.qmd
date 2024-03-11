@@ -1,0 +1,184 @@
+---
+title: "Lecture 7 - Advanced Data Wrangling"
+author: "Waha"
+format: html
+editor: visual
+---
+
+# Advanced Data Wrangling
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(openintro)
+library(nycflights13)
+
+#| echo: false
+
+```
+
+```{r}
+table1 |>
+  group_by(year) |>
+  summarise(total_cases_yearly = sum(cases, na.rm =T))
+```
+
+```{r}
+table2 |>
+  group_by(year) |>
+  filter(type == "cases") |>
+  summarise(total_cases_yearly = sum(count, na.rm =T))
+```
+
+```{r}
+DIY1 <- data.frame(student_name = c("A","B","C","D","A","B","C","D"),
+                   subject = c("Maths","Maths","Maths","Maths","English","English","English","English"),
+                   grade = c(78,79,98,87,77,65,69,80))
+
+DIY1
+
+DIY1 %>%
+  pivot_wider(names_to = "Subject", values_to = "Grade")
+
+DIY1_1 <- data.frame(student_name = c("A","B","C","D"),
+                   P_1 = c(67,87,93,56),
+                   P_2 = c(86,57,68,94))
+```
+
+```{r}
+nycflights13::airports
+```
+
+```{r}
+nycflights13::airports
+
+nycflights13::planes
+
+nycflights13::flights
+
+```
+
+```{r}
+data1 <- data.frame(name = c("A","B","C","D","E","F","G", "H", "I", "J"),
+                   ID = c(193,176,6,273,132,182, 1, 42, 67,20),
+                   age = c(23,24,32,43,23,54, 23,20,40,53),
+                   state = c("MH", "MP", "KA", "MP", "UP", "GJ","MH", "UP", "MH", "TN"))
+
+data2 <- data.frame(id = c(193,176,6,273,132,182, 11, 13, 15),
+                   edu_level = c(12,8,10,12,12,0, 2,5,10))
+data1 %>%
+  left_join(data2, by = join_by(ID == id))
+
+data1 %>%
+  right_join(data2, by = join_by(ID == id))
+
+data1 %>%
+  inner_join(data2, by = join_by(ID == id))
+
+data1 %>%
+  full_join(data2, by = join_by(ID == id))
+
+```
+
+### DIY-3
+
+```{r}
+head(flights)
+head(airlines)
+
+nycflights13::flights %>%
+  full_join(airlines, by = join_by(carrier == carrier))
+
+flights %>%
+  full_join(planes, by = join_by(tailnum == tailnum))
+
+flights %>%
+  left_join(planes, by = join_by(tailnum == tailnum))
+
+flights %>%
+  right_join(planes, by = join_by(tailnum == tailnum))
+
+flights %>%
+  inner_join(planes, by = join_by(tailnum == tailnum))
+
+airlines %>%
+  right_join(flights %>% select(carrier, origin), by = join_by(carrier == carrier))
+```
+
+```{r}
+data1 %>%
+  anti_join(data2 , by = join_by(ID == id))
+```
+
+```{r}
+hospital_visits <- data.frame(name = c("John", NA, NA, NA, "Dave", NA, NA, "Travis", NA, NA),
+                              year = c(2016, 2017, 2018, 2019, 2016, 2017, 2018, 2016, 2017, 2018),
+                              number_of_visits = c(8, 10, 12, NA, 10, 5, NA , 5, 7, NA))
+
+hospital_visits %>%
+  fill(name)
+
+hospital_visits_year <- data.frame(name = c("John", NA, NA, NA, "Dave", NA, NA, "Travis", NA, NA),
+                              year = c(2016, 2017, NA, 2019, 2016, NA, 2018, NA, 2017, 2018),
+                              number_of_visits = c(8, 10, 12, NA, 10, 5, NA , 5, 7, NA))
+
+hospital_visits_year %>%
+  drop_na(year)
+
+hospital_visits_year %>%
+  drop_na()
+```
+
+```{r}
+slice_data <- hospital_visits %>%
+  fill(name)
+
+slice_data$number_of_visits <- coalesce(slice_data$number_of_visits,0)
+
+slice_data %>%
+  slice(1)
+
+slice_data %>%
+  slice_max(number_of_visits)
+
+slice_data %>%
+  slice_min(number_of_visits)
+
+slice_data %>%
+  group_by(name) %>%
+  arrange(desc(number_of_visits)) %>%
+  slice(1)
+```
+
+```{r}
+row_data <- data.frame(id = c(1,2,3,4,5,6),
+                       income_source1 = c(10,15,12,14,20,18),
+                       income_source2 = c(12,14,11,16,25,15),
+                       income_source3 = c(20,25,22,24,30,28))
+
+row_data %>%
+  rowwise() %>%
+  mutate(mean_income = mean(c(income_source1, income_source2, income_source3)))
+```
+
+## DIY - 6
+
+```{r}
+openintro::yrbss
+
+yrbss %>%
+  slice(157)
+
+yrbss %>%
+  slice(10:15)
+
+yrbss %>%
+  group_by(grade) %>%
+  slice(1) %>%
+  drop_na(grade)
+
+yrbss %>%
+  rowwise() %>%
+  mutate(mean_act_str = mean(c(physically_active_7d, strength_training_7d)))
+
+```
