@@ -13,10 +13,19 @@
 
 SW
 #
-Send entire Section 1
 
 @@@@@@@@Send Question 2 second graph and Logistic Regresion #################################################
 
+2nd Graph
+ggplot(Auto, aes(x = weight, y = acceleration, color = factor(origin))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = origin), 
+              formula = y ~ x, 
+              method.args = list(), 
+              show.legend = FALSE) +
+  labs(x = "Weight in pounds (lbs.)", y = "Acceleration", 
+       title = "Weight vs Acceleration by Origin") +
+  theme_minimal()
 
 #Question 1 
 data(starwars)  #Loading dataset
