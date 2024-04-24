@@ -15,7 +15,7 @@ SW
 #
 Send entire Section 1
 
-@@@@@@@@Send Question 2 graphs and Logistic Regresion #################################################
+@@@@@@@@Send Question 2 second graph and Logistic Regresion #################################################
 
 
 #Question 1 
