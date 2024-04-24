@@ -14,8 +14,62 @@
 SW
 #
 
-@@@@@@@@Send Question 2 second graph and Logistic Regresion #################################################
+LOGISTIC - USE DIFFERENT DATASET AND COLOURS
+ISLR::Caravan
+plot(Caravan$Purchase)
+?Caravan
 
+#1
+logit_model <- glm(Purchase ~ MINKGEM + MZPART + APERSAUT, data = Caravan, family = binomial)
+summary(logit_model)
+USE DIFFERENT DATASET AND COLOURS
+#2
+cor(Caravan[, c('MINKGEM', 'MZPART', 'APERSAUT')])
+#No, the predictors are not correlated.
+
+#3
+## Split data into training and testing sets
+set.seed(123) # for reproducibility
+train_indices <- sample(1:nrow(Caravan), 1000)
+train_data <- Caravan[train_indices, ]
+test_data <- Caravan[-train_indices, ]
+## Predict on test set
+predicted <- predict(logit_model, newdata = test_data, type = "response")
+## Create truth table
+threshold <- 0.5 # threshold for classifying as positive
+predicted_class <- ifelse(predicted > threshold, 1, 0)
+actual_class <- test_data$Purchase
+truth_table <- table(predicted_class, actual_class)
+## Calculate Type 1 and Type 2 error rates
+type1_error <- truth_table[2, 1] / sum(truth_table[, 1]) # Type 1 error rate
+type2_error <- truth_table[1, 2] / sum(truth_table[, 2]) # Type 2 error rate
+## Print truth table and error rates
+print(truth_table)
+cat("\nType 1 error rate:", type1_error, "\n")
+cat("Type 2 error rate:", type2_error, "\n")
+USE DIFFERENT DATASET AND COLOURS
+#4
+accuracy <- sum(diag(truth_table)) / sum(truth_table)
+accuracy
+
+#5
+ggplot(Caravan, aes(x = MINKGEM, fill = Purchase)) +
+  geom_bar(position = "fill") +
+  labs(x = "MINKGEM", y = "Proportion", fill = "Purchase") +
+  theme_minimal()
+
+ggplot(Caravan, aes(x = MZPART, fill = Purchase)) +
+  geom_bar(position = "fill") +
+  labs(x = "MZPART", fill = "Purchase") +
+  theme_minimal()
+
+ggplot(Caravan, aes(x = APERSAUT, fill = Purchase)) +
+  geom_bar(position = "fill") +
+  labs(x = "APERSAUT", fill = "Purchase") +
+  theme_minimal()
+USE DIFFERENT DATASET AND COLOURS
+#6
+PseudoR2(logit_model)
 2nd Graph
 ggplot(Auto, aes(x = weight, y = acceleration, color = factor(origin))) +
   geom_point() +
