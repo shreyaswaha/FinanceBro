@@ -15,6 +15,8 @@ SW
 #
 Send entire Section 1
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Send Question 2 graphs and Logistic Regresion #########################################################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 #Question 1 
 data(starwars)  #Loading dataset
