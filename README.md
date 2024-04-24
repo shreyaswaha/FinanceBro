@@ -30,6 +30,7 @@ my_function <- function(dataframe, col_name) {
 data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", header=TRUE)
 my_function(data, data$price)
 USE DIFFERENT DATASET AND COLOURS
+Also, one thing is missing from answer, will try at the end
 
 Neel
 
